@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puppeteer Automation Trigger</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #f4f4f9; }
+        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+        button { background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #0056b3; }
+        #status { margin-top: 20px; color: #555; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Account Automation</h1>
+        <p>Click the button below to start the Puppeteer process via the API.</p>
+        <button id="startBtn">Start Registration</button>
+        <div id="status">Status: Ready</div>
+    </div>
+
+    <script>
+        document.getElementById('startBtn').addEventListener('click', async () => {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerText = "Status: Running automation...";
+            
+            try {
+                const response = await fetch('http://localhost:3000/run-automation');
+                const data = await response.json();
+                
+                if (data.status === "Success") {
+                    statusDiv.innerHTML = `
+                        <p style="color: green;">Success!</p>
+                        <p>Email: ${data.data.email}</p>
+                        <p>Name: ${data.data.firstName} ${data.data.lastName}</p>
+                    `;
+                } else {
+                    statusDiv.innerText = "Status: Error - " + data.message;
+                }
+            } catch (err) {
+                statusDiv.innerText = "Status: Failed to connect to API server.";
+            }
+        });
+    </script>
+</body>
+</html>
